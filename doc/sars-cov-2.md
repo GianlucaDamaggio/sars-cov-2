@@ -61,7 +61,7 @@ Coverage for each bases
 ```
 bedtools genomecov -d -ibam ~/projects/sars-cov-2/alignment/barcode01_sorted.bam > ~/projects/sars-cov-2/coverage/barcode01_coverage_eachBases.txt
 ```
-Plot coverage for each bases
+Plot coverage for each bases with R
 ```
 library(tidyverse)
 
@@ -71,7 +71,7 @@ ggplot(myd, aes(V2,V3)) + geom_area( fill="#69b3a2", alpha=0.4) + geom_line(colo
 
 ggsave("~/projects/sars-cov-2/plots/barcode01_coverage_eachBases.pdf")
 ```
-Plot Barcode01/02 together
+Plot Barcode01/02 together with R
 ```
 library(tidyverse)
 
