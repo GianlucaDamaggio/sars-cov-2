@@ -1,6 +1,6 @@
 # Sars-Cov-2
 
-## Alignment
+## Alignment with [minimap2](https://github.com/lh3/minimap2)
 ```
 # default output
 minimap2 -t 8 ~/projects/sars-cov-2/reference/NC_045512.2.fa ~/projects/sars-cov-2/data/fastq_pass/barcode01/all_barcode01.fastq -o ~/projects/sars-cov-2/alignment/barcode01.paf
