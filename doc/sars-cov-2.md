@@ -88,7 +88,7 @@ ggplot(myd_final, aes(V2,V3, color=id)) + geom_line() + xlab("length") + ylab("c
 ggsave("~/projects/sars-cov-2/plots/all_coverage_eachBases.pdf")
 ```
 
-## Assembly using correctify
+## Assembly using correctify script from [viral-assembly](https://github.com/ekg/viral-assembly) repo
 
 ```
 ~/github/viral-assembly/scripts/correctify -f /lustre/home/enza/sars-cov-2/ceinge/data/Covid-19_Run1/Pool_covid/20200804_1408_MN25488_FAO00129_31063f42/fastq_pass/barcode01/all_barcode01.fastq -o /lustre/home/enza/sars-cov-2/ceinge/assembly/barcode01_assembly -k 15 -a 100 -G 350 -L 550 -p barcode01 -t 48
