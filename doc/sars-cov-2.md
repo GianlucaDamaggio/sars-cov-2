@@ -88,19 +88,18 @@ ggplot(myd_final, aes(V2,V3, color=id)) + geom_line() + xlab("length") + ylab("c
 ggsave("~/projects/sars-cov-2/plots/all_coverage_eachBases.pdf")
 ```
 
-## Assembly using correctify script from [viral-assembly](https://github.com/ekg/viral-assembly) repo
+## Assembly using [ArticNetwork](https://github.com/artic-network/artic-ncov2019)
+Demultiplex
+```
+~/src/ont-guppy-cpu/bin/./guppy_barcoder --require_barcodes_both_ends -i /lustre/home/enza/sars-cov-2/ceinge/assembly/artic_analysis/20200804_1408_MN25488_FAO00129_31063f42/fastq_pass/ -s /lustre/home/enza/sars-cov-2/ceinge/assembly/artic_analysis/20200804_1408_MN25488_FAO00129_31063f42/analysis/demultiplex/ --arrangements_files "barcode_arrs_nb12.cfg barcode_arrs_nb24.cfg"
+```
+Read filtering
+```
+artic guppyplex --min-length 400 --max-length 700 --directory /lustre/home/enza/sars-cov-2/ceinge/assembly/artic_analysis/20200804_1408_MN25488_FAO00129_31063f42/analysis/demultiplex/barcode02 --prefix 20200804_1408_MN25488_FAO00129_31063f42
 
+#move output
 ```
-~/github/viral-assembly/scripts/correctify -f /lustre/home/enza/sars-cov-2/ceinge/data/Covid-19_Run1/Pool_covid/20200804_1408_MN25488_FAO00129_31063f42/fastq_pass/barcode01/all_barcode01.fastq -o /lustre/home/enza/sars-cov-2/ceinge/assembly/barcode01_assembly -k 15 -a 100 -G 350 -L 550 -p barcode01 -t 48
+Run the MinION pipeline
 ```
-## Validate assembly using [MashMap](https://github.com/marbl/MashMap)
-```
-# move into WorkingDirectory
-cd /lustre/home/enza/sars-cov-2/ceinge/assembly/mashmap/barcode01/
-
-lustrehome/gianluca/github/MashMap/./mashmap -s 500 -r /lustre/home/enza/sars-cov-2/ceinge/data/reference/NC_045512.2.fa -q /lustre/home/enza/sars-cov-2/ceinge/assembly/barcode01_assembly/minia.k15.a100.contigs.fa
-```
-DotPlot
-```
-~/github/MashMap/scripts/./generateDotPlot png large mashmap.out
+artic minion --normalise 200 --threads 4 --scheme-directory /lustrehome/gianluca/github/artic-ncov2019/primer_schemes --read-file /lustre/home/enza/sars-cov-2/ceinge/assembly/artic_analysis/20200804_1408_MN25488_FAO00129_31063f42/analysis/demultiplex/barcode01/20200804_1408_MN25488_FAO00129_31063f42_barcode01.fastq --fast5-directory /lustre/home/enza/sars-cov-2/ceinge/data/Covid-19_Run1/Pool_covid/20200804_1408_MN25488_FAO00129_31063f42/fast5_pass --sequencing-summary /lustre/home/enza/sars-cov-2/ceinge/data/Covid-19_Run1/Pool_covid/20200804_1408_MN25488_FAO00129_31063f42/sequencing_summary_FAO00129_be760d9d.txt nCoV-2019/V3 20200804_1408_MN25488_FAO00129_31063f42
 ```
