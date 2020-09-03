@@ -12,6 +12,11 @@ Count how many reads are in input fastq and compare with minimap2 run
 ```
 awk '(NR-2)%4==0 { print $1}' ~/projects/sars-cov-2/data/fastq_pass/barcode01/all_barcode01.fastq | wc -l
 ```
+### Valuate with Dotploty alignment with reference
+
+```
+~/src/dotPlotly/./pafCoordsDotPlotly.R -i /lustre/home/enza/sars-cov-2/ceinge/alignment/barcode02/barcode02.paf -o barcode02_dotplotly -s -t -m 10 -q 10 -s -p 15
+```
 
 ### Length distribution of nanopore reads
 
