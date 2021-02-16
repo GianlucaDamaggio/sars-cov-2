@@ -5,20 +5,29 @@
 # default output
 minimap2 -t 8 ~/projects/sars-cov-2/reference/NC_045512.2.fa ~/projects/sars-cov-2/data/fastq_pass/barcode01/all_barcode01.fastq -o ~/projects/sars-cov-2/alignment/barcode01.paf
 
+for id in 03 04 05 06 07 08 09 10 11 12 ; do echo qsub -q testqueue -l nodes=1:ppn=40 -o /lustrehome/gianluca/junk/minimapPAF_barcode$id.out -e /lustrehome/gianluca/junk/minimapPAF_barcode$id.err -v id="$id" -N miniPAF_barcode$id /lustrehome/gianluca/jobs/sars-cov-2/pbs-minimap_paf.sh ; done
+
 # SAM outout
 minimap2 -t 8 -a ~/projects/sars-cov-2/reference/NC_045512.2.fa ~/projects/sars-cov-2/data/fastq_pass/barcode01/all_barcode01.fastq -o ~/projects/sars-cov-2/alignment/barcode01.sam
+
+for id in 03 04 05 06 07 08 09 10 11 12 ; do echo qsub -q testqueue -l nodes=1:ppn=40 -o /lustrehome/gianluca/junk/minimapSAM_barcode$id.out -e /lustrehome/gianluca/junk/minimapSAM_barcode$id.err -v id="$id" -N miniSAM_barcode$id /lustrehome/gianluca/jobs/sars-cov-2/pbs-minimap_sam.sh ; done
+
 ```
 Count how many reads are in input fastq and compare with minimap2 run
 ```
 awk '(NR-2)%4==0 { print $1}' ~/projects/sars-cov-2/data/fastq_pass/barcode01/all_barcode01.fastq | wc -l
 ```
-### Valuate with Dotploty alignment with reference
+<!-- ### Valuate with Dotploty alignment with reference
 
+Not work !!
 ```
 ~/src/dotPlotly/./pafCoordsDotPlotly.R -i /lustre/home/enza/sars-cov-2/ceinge/alignment/barcode02/barcode02.paf -o barcode02_dotplotly -s -t -m 10 -q 10 -s -p 15
-```
 
-### Length distribution of nanopore reads
+for id in 03 04 05 06 07 08 09 10 11 12 ; do echo qsub -q testqueue -l nodes=1:ppn=40 -o /lustrehome/gianluca/junk/dotplotly_barcode$id.out -e /lustrehome/gianluca/junk/dotplotly_barcode$id.err -v id="$id" -N dotplotly_barcode$id /lustrehome/gianluca/jobs/sars-cov-2/pbs-dotPlotly.sh ; done
+
+``` -->
+
+<!-- ### Length distribution of nanopore reads
 
 Count length of each read from fastq file
 
@@ -39,13 +48,13 @@ ggsave("~/projects/sars-cov-2/plots/barcode01_sars_length.pdf")
 ggplot(myd, aes(V1)) + geom_density() + xlim (0,1000)
 ggsave("~/projects/sars-cov-2/plots/barcode01_sars_length_Max1k.pdf")
 
-```
+``` -->
 
 ## Coverage
 
 Distribution of coverage along the sequence
 
-```
+<!-- ```
 samtools sort ~/projects/sars-cov-2/alignment/barcode01.sam > ~/projects/sars-cov-2/alignment/barcode01_sorted.sam
 
 # tabular output
@@ -61,18 +70,24 @@ samtools view -b ~/projects/sars-cov-2/alignment/barcode01_sorted.sam > ~/projec
 Print average of total coverage
 ```
 samtools depth  ~/projects/sars-cov-2/alignment/barcode01_sorted.bam  |  awk '{sum+=$3} END { print "Average = ",sum/NR}'
-```
+``` -->
 Coverage for each bases
 ```
 bedtools genomecov -d -ibam ~/projects/sars-cov-2/alignment/barcode01_sorted.bam > ~/projects/sars-cov-2/coverage/barcode01_coverage_eachBases.txt
-bedtools genomecov -d -ibam ~/projects/sars-cov-2/alignment/barcode02_sorted.bam > ~/projects/sars-cov-2/coverage/barcode02_coverage_eachBases.txt
+
+for id in 03 04 05 06 07 08 09 10 11 12 ; do echo qsub -q testqueue -l nodes=1:ppn=40 -o /lustrehome/gianluca/junk/genomecov_barcode$id.out -e /lustrehome/gianluca/junk/genomecov_barcode$id.err -v id="$id" -N genomecov_barcode$id /lustrehome/gianluca/jobs/sars-cov-2/pbs-genomecov.sh ; done
 
 echo reference position cov | tr " " "\t" > header.txt
 
-cat header.txt barcode01_coverage_eachBases.txt > barcode01_coverage_eachBases.tsv
-cat header.txt barcode02_coverage_eachBases.txt > barcode02_coverage_eachBases.tsv
+for id in 03 04 05 06 07 08 09 10 11 12 ; do cat header.txt /lustre/home/enza/sars-cov-2/ceinge/assembly/artic_analysis/20201130_1527_1F_PAG19577_0a1c6f33/coverage/barcode$id/barcode$id.coverage_eachBases.txt > /lustre/home/enza/sars-cov-2/ceinge/assembly/artic_analysis/20201130_1527_1F_PAG19577_0a1c6f33/coverage/barcode$id/barcode$id.coverage_eachBases.tsv ; done
 ```
-Plot coverage for each bases with R
+## Coverage analysis with different ID (seminario IGB 18/12/2020)
+
+```
+Rscript /Users/gianlucadamaggio/projects/sars-cov-2/doc/comparison_differentID.R
+```
+
+<!-- Plot coverage for each bases with R
 ```
 library(tidyverse)
 library (grid)
@@ -112,7 +127,7 @@ myd_final = rbind(myd01,myd02)
 ggplot(myd_final, aes(V2,V3, color=id)) + geom_line() + xlab("length") + ylab("coverage") + ggtitle("Coverage Distribution")
 
 ggsave("~/projects/sars-cov-2/plots/all_coverage_eachBases.pdf")
-```
+``` -->
 
 ## Assembly using [ArticNetwork](https://github.com/artic-network/artic-ncov2019)
 Demultiplex
@@ -138,7 +153,7 @@ for id in 03 04 05 06 07 08 09 10 11 12 ; do echo qsub -q testqueue -l nodes=1:p
 ```
 
 
-## Obtain regions with coverage < threshold
+<!-- ## Obtain regions with coverage < threshold
 ```
 
 library(tidyverse)
@@ -175,7 +190,7 @@ ggsave(plot=pgrid,filename="~/projects/sars-cov-2/coverage/gap_cov20cov50.png",h
 
 
 
-```
+``` -->
 
 ## Obtain table for GAP interval (position with coverage < threshold)
 
@@ -220,12 +235,10 @@ df.to_csv('~/projects/sars-cov-2/coverage/bar01_gap.csv')
 ## Assembly GAP from Consensus fasta (denovo assemby) https://bioinf.shenwei.me/seqkit/
 
 ```
-for n in 01 02; do seqkit locate --ignore-case --only-positive-strand -r --pattern "N" ~/projects/sars-cov-2/assembly/fasta/20200804_1408_MN25488_FAO00129_31063f42.barcode$n.consensus.fasta  > ~/projects/sars-cov-2/assembly/gap_interval/assemblyGap_barcode$n.tsv ; done
+for n in 03 04 05 06 07 08 09 10 11 12; do seqkit locate --ignore-case --only-positive-strand -r --pattern "N+" /lustre/home/enza/sars-cov-2/ceinge/assembly/artic_analysis/20201130_1527_1F_PAG19577_0a1c6f33/artic/barcode$n/20201130_1527_1F_PAG19577_0a1c6f33.consensus.fasta > /lustre/home/enza/sars-cov-2/ceinge/assembly/artic_analysis/20201130_1527_1F_PAG19577_0a1c6f33/artic/barcode$n/assemblyGap_barcode$n.tsv ; done
+```
 
-#Summary with start/end interval
-for n in 01 02; do seqkit locate --ignore-case --only-positive-strand -r --pattern "N+" ~/projects/sars-cov-2/assembly/fasta/20200804_1408_MN25488_FAO00129_31063f42.barcode$n.consensus.fasta > ~/projects/sars-cov-2/assembly/gap_interval/summary_assemblyGap_barcode$n.tsv ; done
-```
-```
+<!-- ```
 library(tidyverse)
 
 bar01=read.table("~/projects/sars-cov-2/assembly/gap_interval/assemblyGap_barcode01.tsv", header=T, sep="\t")
@@ -240,12 +253,32 @@ gap_interval = bar %>% ggplot( aes(start, ID, fill=ID )) + geom_tile()+ labs(col
 
 ggsave(plot=gap_interval,filename="~/projects/sars-cov-2/assemby/assembyGap_interval.png",height=10, width=20)
 
-```
+``` -->
 
 
 
 ## Variant Effect Predictor [custom](http://www.ensembl.info/2020/08/28/cool-stuff-the-ensembl-vep-can-do-annotating-sars-cov-2-variants/) for Sars-Cov-2
 
+### VEP on run1
 ```
-singularity exec -B /lustre/home/enza/ /lustre/home/enza/biocontainers/vep-101.sif vep -i /lustre/home/enza/sars-cov-2/ceinge/assembly/artic_analysis/20200804_1408_MN25488_FAO00129_31063f42/analysis/artic/sars_merged.vcf.gz -gff /lustre/home/enza/sars-cov-2/ceinge/variantCalling/data/ensembl/gff3/sars_cov_2/Sars_cov_2.ASM985889v3.100.primary_assembly.MN908947.3.gff.gz -fasta /lustre/home/enza/sars-cov-2/ceinge/variantCalling/data/ensembl/fasta/sars_cov_2/dna/Sars_cov_2.ASM985889v3.dna_sm.toplevel.fa.gz --force_overwrite
+singularity exec -B /lustre/home/enza/ /lustre/home/enza/biocontainers/vep-101.sif vep -i /lustre/home/enza/sars-cov-2/ceinge/assembly/artic_analysis/20200804_1408_MN25488_FAO00129_31063f42/analysis/artic/sars_merged.vcf.gz -gff /lustre/home/enza/sars-cov-2/ceinge/variantCalling/data/ensembl/gff3/sars_cov_2_vep100/Sars_cov_2.ASM985889v3.100.primary_assembly.MN908947.3.gff.gz -fasta /lustre/home/enza/sars-cov-2/ceinge/variantCalling/data/ensembl/fasta/sars_cov_2/dna/Sars_cov_2.ASM985889v3.dna_sm.toplevel.fa.gz --force_overwrite
 ```
+
+### VEP on run2 Promethaion
+```
+for id in 03 04 05 06 07 08 09 10 11 12; do qsub -q testqueue -l nodes=1:ppn=40 -o /lustrehome/gianluca/junk/vep_$id.out -e /lustrehome/gianluca/junk/vep_$id.err -v id="$id" -N vep_$id /lustrehome/gianluca/jobs/sars-cov-2/pbs-sarsCov2_VEP.sh ; done
+```
+
+#### Count number of reads for each Barcode ()
+
+(base) [gianluca@ui02 barcode03]$ for c in 03 04 05 06 07 08 09 10 11 12; do awk '(NR-2)%4==0 { print $1}' ../barcode$c/20201130_1527_1F_PAG19577_0a1c6f33_barcode$c.fastq | wc -l ; done
+3641115
+1679310
+1431084
+215080
+3899796
+2195511
+5361839
+2126633
+3822106
+1954960
